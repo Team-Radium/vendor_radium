@@ -232,11 +232,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
 	ro.romstats.version=$(RADIUM_VERSION_MAJOR).$(RADIUM_VERSION_MINOR)-$(RADIUM_VERSION_STATE) \
 	ro.romstats.tframe=7
   
-# SuperSU and RomStats
+# SuperSU, RomStats and Themechooser
 PRODUCT_COPY_FILES += \
     vendor/radium/prebuilt/common/UPDATE-SuperSU.zip:system/addon.d/UPDATE-SuperSU.zip \
     vendor/radium/prebuilt/common/etc/init.d/99SuperSUDaemon:system/etc/init.d/99SuperSUDaemon \
     vendor/radium/prebuilt/common/RomStats.apk:system/app/RomStats/RomStats.apk
+    vendor/radium/prebuilt/common/ThemeChooser.apk:system/priv-app/ThemeChooser/ThemeChooser.apk
 
 ifneq ($(PRODUCT_DEFAULT_DEV_CERTIFICATE),)
 ifneq ($(PRODUCT_DEFAULT_DEV_CERTIFICATE),build/target/product/security/testkey)
