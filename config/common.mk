@@ -220,18 +220,18 @@ else
 endif
     RADIUM_VERSION := Poised-Radium-$(RADIUM_VERSION_MAJOR).$(RADIUM_VERSION_MINOR)-$(RADIUM_VERSION_STATE)-$(RADIUM_BUILD)-$(shell date +%Y%m%d)
 
-RADIUM_DISPLAY_VERSION := $(RADIUM_VERSION) 
+RADIUM_DISPLAY_VERSION := $(RADIUM_VERSION)
 
 PRODUCT_PROPERTY_OVERRIDES += \
-        ro.radium.version=$(RADIUM_VERSION) \
+  ro.radium.version=$(RADIUM_VERSION) \
 	ro.radium.releasetype=$(RADIUM_BUILDTYPE) \
 	ro.modversion=$(RADIUM_VERSION) \
 	radium.ota.version=$(shell date +%Y%m%d) \
-	ro.romstats.url=http://team-radium.webege.com/stats \
+	ro.romstats.url=http://team-radium.comyr.com/stats \
 	ro.romstats.name=Team-Radium \
 	ro.romstats.version=$(RADIUM_VERSION_MAJOR).$(RADIUM_VERSION_MINOR)-$(RADIUM_VERSION_STATE) \
 	ro.romstats.tframe=7
-  
+
 # SuperSU, RomStats and Themechooser
 PRODUCT_COPY_FILES += \
     vendor/radium/prebuilt/common/UPDATE-SuperSU.zip:system/addon.d/UPDATE-SuperSU.zip \
