@@ -54,10 +54,9 @@ persist.rild.nitz_short_ons_2=
 persist.rild.nitz_short_ons_3=
 
 # Radio
-persist.data.qmi.adb_logmask=0
 persist.radio.apm_sim_not_pwdn=1
 rild.libargs=-d /dev/smd0
-
+ro.telephony.ril.config=simactivation
 ro.use_data_netmgrd=true
 
 # Time
@@ -76,14 +75,10 @@ ro.sys.fw.trim_empty_percent=100
 ro.sys.fw.trim_cache_percent=100
 ro.sys.fw.trim_enable_memory=1073741824
 
-
-# Enable B service adj transition by default
+#Enable B service adj transition by default
 ro.sys.fw.bservice_enable=true
 ro.sys.fw.bservice_limit=5
 ro.sys.fw.bservice_age=5000
-
-# WiFi
-ro.disableWifiApFirmwareReload=true
 #
 # from device/yu/lettuce/system.prop
 #
@@ -110,20 +105,28 @@ ro.telephony.default_network=9,1
 
 # relax sensor fusion mag field filter
 ro.fusion.magfield.max=250
-ro.adb.secure=0
-ro.secure=0
+
+persist.data.qmi.adb_logmask=0
 
 #
 # ADDITIONAL_BUILD_PROPERTIES
 #
 keyguard.no_require_sim=true
-ro.com.android.dataroaming=true
 ro.config.ringtone=Ring_Synth_04.ogg
 ro.config.notification_sound=pixiedust.ogg
 ro.carrier=unknown
 ro.config.alarm_alert=Alarm_Classic.ogg
-dalvik.vm.dex2oat-filter=speed
-dalvik.vm.dex2oat-swap=false
+ro.url.legal=http://www.google.com/intl/%s/mobile/android/basic/phone-legal.html
+ro.url.legal.android_privacy=http://www.google.com/intl/%s/mobile/android/basic/privacy.html
+ro.com.android.wifi-watchlist=GoogleGuest
+ro.setupwizard.enterprise_mode=1
+ro.com.android.dateformat=MM-dd-yyyy
+ro.com.android.dataroaming=false
+ro.build.selinux=1
+media.sf.omx-plugin=libffmpeg_omx.so
+media.sf.extractor-plugin=libffmpeg_extractor.so
+persist.sys.root_access=0
+persist.sys.recovery_update=false
 dalvik.vm.heapstartsize=12m
 dalvik.vm.heapgrowthlimit=128m
 dalvik.vm.heapsize=256m
@@ -141,26 +144,12 @@ ro.hwui.text_small_cache_height=1024
 ro.hwui.text_large_cache_width=2048
 ro.hwui.text_large_cache_height=1024
 sys.io.scheduler=row
-ro.com.google.clientidbase=android-google
-ro.url.legal=http://www.google.com/intl/%s/mobile/android/basic/phone-legal.html
-ro.url.legal.android_privacy=http://www.google.com/intl/%s/mobile/android/basic/privacy.html
-ro.com.android.wifi-watchlist=GoogleGuest
-ro.setupwizard.enterprise_mode=1
-ro.com.android.dateformat=MM-dd-yyyy
-ro.build.selinux=1
-persist.sys.dun.override=0
-media.sf.omx-plugin=libffmpeg_omx.so
-media.sf.extractor-plugin=libffmpeg_extractor.so
-persist.sys.recovery_update=false
 persist.sys.dalvik.vm.lib.2=libart
 dalvik.vm.isa.arm64.variant=generic
 dalvik.vm.isa.arm64.features=default
 dalvik.vm.isa.arm.variant=cortex-a53
 dalvik.vm.isa.arm.features=default
-ro.kernel.android.checkjni=1
 dalvik.vm.lockprof.threshold=500
-dalvik.vm.image-dex2oat-filter=verify-at-runtime
-dalvik.vm.usejit=true
 net.bt.name=Android
 dalvik.vm.stack-trace-file=/data/anr/traces.txt
-ro.expect.recovery_id=0xe28d089d3a30c320b4ddeb02c0aa7d8f682e99a8000000000000000000000000
+ro.expect.recovery_id=0xadaa4d56b6545aad7b52a4dfb6e03942a8459729000000000000000000000000
