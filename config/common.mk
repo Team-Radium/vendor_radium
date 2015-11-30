@@ -1,294 +1,166 @@
-PRODUCT_BRAND ?= radium
+# from device/cyanogen/msm8916-common/system.prop
+#
+# Art
+dalvik.vm.dex2oat-flags=--no-watch-dog
 
-ifneq ($(TARGET_SCREEN_WIDTH) $(TARGET_SCREEN_HEIGHT),$(space))
-# determine the smaller dimension
-TARGET_BOOTANIMATION_SIZE := $(shell \
-  if [ $(TARGET_SCREEN_WIDTH) -lt $(TARGET_SCREEN_HEIGHT) ]; then \
-    echo $(TARGET_SCREEN_WIDTH); \
-  else \
-    echo $(TARGET_SCREEN_HEIGHT); \
-  fi )
+# Audio
+tunnel.audio.encode=false
+av.offload.enable=true
+av.streaming.offload.enable=true
+audio.offload.buffer.size.kb=64
+audio.offload.gapless.enabled=true
+audio.offload.min.duration.secs=30
+audio.offload.pcm.16bit.enable=false
+audio.offload.pcm.24bit.enable=true
+use.voice.path.for.pcm.voip=true
+vidc.enc.narrow.searchrange=1
 
-# get a sorted list of the sizes
-bootanimation_sizes := $(subst .zip,, $(shell ls vendor/radium/prebuilt/common/bootanimation))
-bootanimation_sizes := $(shell echo -e $(subst $(space),'\n',$(bootanimation_sizes)) | sort -rn)
+# Media
+mm.enable.qcom_parser=3183153
+mm.enable.smoothstreaming=true
+mm.disable.sec_smoothstreaming=true
+media.aac_51_output_enabled=true
 
-# find the appropriate size and set
-define check_and_set_bootanimation
-$(eval TARGET_BOOTANIMATION_NAME := $(shell \
-  if [ -z "$(TARGET_BOOTANIMATION_NAME)" ]; then
-    if [ $(1) -le $(TARGET_BOOTANIMATION_SIZE) ]; then \
-      echo $(1); \
-      exit 0; \
-    fi;
-  fi;
-  echo $(TARGET_BOOTANIMATION_NAME); ))
-endef
-$(foreach size,$(bootanimation_sizes), $(call check_and_set_bootanimation,$(size)))
+# set max starting background services
+ro.config.max_starting_bg=8
 
-ifeq ($(TARGET_BOOTANIMATION_HALF_RES),true)
-PRODUCT_BOOTANIMATION := vendor/radium/prebuilt/common/bootanimation/halfres/$(TARGET_BOOTANIMATION_NAME).zip
-else
-PRODUCT_BOOTANIMATION := vendor/radium/prebuilt/common/bootanimation/$(TARGET_BOOTANIMATION_NAME).zip
-endif
-endif
+# Bluetooth
+ro.qualcomm.bt.hci_transport=smd
 
-PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
+# Display
+debug.composition.type=c2d
+debug.sf.gpu_comp_tiling=1
+debug.mdpcomp.idletime=600
+persist.hwc.mdpcomp.enable=true
+persist.hwc.ptor.enable=true
+ro.opengles.version=196608
+debug.enable.sglscale=1
 
-ifeq ($(PRODUCT_GMS_CLIENTID_BASE),)
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.com.google.clientidbase=android-google
-else
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.com.google.clientidbase=$(PRODUCT_GMS_CLIENTID_BASE)
-endif
+# GPS
+persist.gps.qc_nlp_in_use=0
+ro.gps.agps_provider=1
+ro.qc.sdk.izat.premium.enabled=0
+ro.qc.sdk.izat.service_mask=0x0
 
-PRODUCT_PROPERTY_OVERRIDES += \
-    keyguard.no_require_sim=true \
-    ro.url.legal=http://www.google.com/intl/%s/mobile/android/basic/phone-legal.html \
-    ro.url.legal.android_privacy=http://www.google.com/intl/%s/mobile/android/basic/privacy.html \
-    ro.com.android.wifi-watchlist=GoogleGuest \
-    ro.setupwizard.enterprise_mode=1 \
-    ro.com.android.dateformat=dd-MM-yyyy \
-    ro.com.android.dataroaming=false
+# NITZ
+persist.rild.nitz_plmn=
+persist.rild.nitz_long_ons_0=
+persist.rild.nitz_long_ons_1=
+persist.rild.nitz_long_ons_2=
+persist.rild.nitz_long_ons_3=
+persist.rild.nitz_short_ons_0=
+persist.rild.nitz_short_ons_1=
+persist.rild.nitz_short_ons_2=
+persist.rild.nitz_short_ons_3=
 
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.build.selinux=1
+# Radio
+persist.data.qmi.adb_logmask=0
+persist.radio.apm_sim_not_pwdn=1
+rild.libargs=-d /dev/smd0
 
-# Thank you, please drive thru!
-PRODUCT_PROPERTY_OVERRIDES += persist.sys.dun.override=0
+ro.use_data_netmgrd=true
 
-ifneq ($(TARGET_BUILD_VARIANT),eng)
-# Enable ADB authentication
-ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=1
-endif
+# Time
+persist.timed.enable=true
 
-# Backup Tool
-ifneq ($(WITH_GMS),true)
-PRODUCT_COPY_FILES += \
-    vendor/radium/prebuilt/common/bin/backuptool.sh:install/bin/backuptool.sh \
-    vendor/radium/prebuilt/common/bin/backuptool.functions:install/bin/backuptool.functions \
-    vendor/radium/prebuilt/common/bin/50-radium.sh:system/addon.d/50-radium.sh \
-    vendor/radium/prebuilt/common/bin/blacklist:system/addon.d/blacklist
-endif
+# perf
+ro.core_ctl_min_cpu=2
+ro.core_ctl_max_cpu=4
+ro.min_freq_0=800000
+ro.vendor.extension_library=libqti-perfd-client.so
 
-# Signature compatibility validation
-PRODUCT_COPY_FILES += \
-    vendor/radium/prebuilt/common/bin/otasigcheck.sh:install/bin/otasigcheck.sh
+#Trim properties
+ro.sys.fw.use_trim_settings=true
+ro.sys.fw.empty_app_percent=50
+ro.sys.fw.trim_empty_percent=100
+ro.sys.fw.trim_cache_percent=100
+ro.sys.fw.trim_enable_memory=1073741824
 
-# init.d support
-PRODUCT_COPY_FILES += \
-    vendor/radium/prebuilt/common/etc/init.d/00banner:system/etc/init.d/00banner \
-    vendor/radium/prebuilt/common/bin/sysinit:system/bin/sysinit
 
-ifneq ($(TARGET_BUILD_VARIANT),user)
-# userinit support
-PRODUCT_COPY_FILES += \
-    vendor/radium/prebuilt/common/etc/init.d/90userinit:system/etc/init.d/90userinit
-endif
+# Enable B service adj transition by default
+ro.sys.fw.bservice_enable=true
+ro.sys.fw.bservice_limit=5
+ro.sys.fw.bservice_age=5000
 
-# radium-specific init file
-PRODUCT_COPY_FILES += \
-    vendor/radium/prebuilt/common/etc/init.local.rc:root/init.radium.rc
+# WiFi
+ro.disableWifiApFirmwareReload=true
+#
+# from device/yu/lettuce/system.prop
+#
+# Audio
+ro.qc.sdk.audio.fluencetype=fluence
+persist.audio.fluence.voicecall=true
+persist.audio.fluence.voicerec=false
+persist.audio.fluence.speaker=true
 
-# Bring in camera effects
-PRODUCT_COPY_FILES +=  \
-    vendor/radium/prebuilt/common/media/LMprec_508.emd:system/media/LMprec_508.emd \
-    vendor/radium/prebuilt/common/media/PFFprec_600.emd:system/media/PFFprec_600.emd
+# set roaming indicator to always show
+ro.config.always_show_roaming=true
 
-# Enable SIP+VoIP on all targets
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml
+# Display
+ro.sf.lcd_density=320
 
-# Enable wireless Xbox 360 controller support
-PRODUCT_COPY_FILES += \
-    frameworks/base/data/keyboards/Vendor_045e_Product_028e.kl:system/usr/keylayout/Vendor_045e_Product_0719.kl
+# Radio
+persist.data.target=dpm1
+persist.radio.multisim.config=dsds
+persist.radio.no_cons_man_roam=1
+ril.ecclist=000,08,100,101,102,110,112,118,119,120,122,911,999
 
-# This is radium!
-PRODUCT_COPY_FILES += \
-    vendor/radium/config/permissions/com.radium.android.xml:system/etc/permissions/com.radium.android.xml
+ro.com.android.mobiledata=false
+ro.telephony.default_network=9,1
 
-# T-Mobile theme engine
-include vendor/radium/config/themes_common.mk
+# relax sensor fusion mag field filter
+ro.fusion.magfield.max=250
+ro.adb.secure=0
+ro.secure=0
 
-# Required CM packages
-PRODUCT_PACKAGES += \
-    Development \
-    BluetoothExt \
-    Profiles
-
-# Optional CM packages
-PRODUCT_PACKAGES += \
-    VoicePlus \
-    Basic \
-    libemoji \
-    Terminal
-
-# Custom packages
-PRODUCT_PACKAGES += \
-    Launcher3 \
-    Trebuchet \
-    AudioFX \
-    CMFileManager \
-    Apollo \
-    LockClock \
-    CMHome \
-    RadiumOTA
-
-# CM Platform Library
-PRODUCT_PACKAGES += \
-    org.cyanogenmod.platform-res \
-    org.cyanogenmod.platform \
-    org.cyanogenmod.platform.xml
-
-# CM Hardware Abstraction Framework
-PRODUCT_PACKAGES += \
-    org.cyanogenmod.hardware \
-    org.cyanogenmod.hardware.xml
-
-# Extra tools in CM
-PRODUCT_PACKAGES += \
-    libsepol \
-    e2fsck \
-    mke2fs \
-    tune2fs \
-    bash \
-    nano \
-    htop \
-    powertop \
-    lsof \
-    mount.exfat \
-    fsck.exfat \
-    mkfs.exfat \
-    mkfs.f2fs \
-    fsck.f2fs \
-    fibmap.f2fs \
-    ntfsfix \
-    ntfs-3g \
-    gdbserver \
-    micro_bench \
-    oprofiled \
-    sqlite3 \
-    strace
-
-# Openssh
-PRODUCT_PACKAGES += \
-    scp \
-    sftp \
-    ssh \
-    sshd \
-    sshd_config \
-    ssh-keygen \
-    start-ssh
-
-# rsync
-PRODUCT_PACKAGES += \
-    rsync
-
-# Stagefright FFMPEG plugin
-PRODUCT_PACKAGES += \
-    libffmpeg_extractor \
-    libffmpeg_omx \
-    media_codecs_ffmpeg.xml
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    media.sf.omx-plugin=libffmpeg_omx.so \
-    media.sf.extractor-plugin=libffmpeg_extractor.so
-
-# These packages are excluded from user builds
-ifneq ($(TARGET_BUILD_VARIANT),user)
-PRODUCT_PACKAGES += \
-    procmem \
-    procrank \
-    su
-endif
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.sys.root_access=0
-
-PRODUCT_PACKAGE_OVERLAYS += vendor/radium/overlay/common
-
-RADIUM_VERSION_MAJOR = 1
-RADIUM_VERSION_MINOR = 3
-PRODUCT_VERSION_MAINTENANCE = 0-RC0
-
-# release
-ifeq ($(RADIUM_RELEASE),true)
-    RADIUM_VERSION_STATE := OFFICIAL
-else
-    RADIUM_VERSION_STATE := UNOFFICIAL
-endif
-    RADIUM_VERSION := Poised-Radium-$(RADIUM_VERSION_MAJOR).$(RADIUM_VERSION_MINOR)-$(RADIUM_VERSION_STATE)-$(RADIUM_BUILD)-$(shell date +%Y%m%d)
-
-RADIUM_DISPLAY_VERSION := $(RADIUM_VERSION)
-
-PRODUCT_PROPERTY_OVERRIDES += \
-  ro.radium.version=$(RADIUM_VERSION) \
-	ro.radium.releasetype=$(RADIUM_BUILDTYPE) \
-	ro.modversion=$(RADIUM_VERSION) \
-	radium.ota.version=$(shell date +%Y%m%d) \
-	ro.romstats.url=http://team-radium.comyr.com/stats \
-	ro.romstats.name=Team-Radium \
-	ro.romstats.version=$(RADIUM_VERSION_MAJOR).$(RADIUM_VERSION_MINOR)-$(RADIUM_VERSION_STATE) \
-	ro.romstats.tframe=7
-
-# SuperSU, RomStats and Themechooser
-PRODUCT_COPY_FILES += \
-    vendor/radium/prebuilt/common/UPDATE-SuperSU.zip:system/addon.d/UPDATE-SuperSU.zip \
-    vendor/radium/prebuilt/common/etc/init.d/99SuperSUDaemon:system/etc/init.d/99SuperSUDaemon \
-    vendor/radium/prebuilt/common/RomStats.apk:system/app/RomStats/RomStats.apk
-    vendor/radium/prebuilt/common/ThemeChooser.apk:system/priv-app/ThemeChooser/ThemeChooser.apk
-
-ifneq ($(PRODUCT_DEFAULT_DEV_CERTIFICATE),)
-ifneq ($(PRODUCT_DEFAULT_DEV_CERTIFICATE),build/target/product/security/testkey)
-  ifneq ($(RADIUM_BUILDTYPE), UNOFFICIAL)
-    ifndef TARGET_VENDOR_RELEASE_BUILD_ID
-      ifneq ($(RADIUM_EXTRAVERSION),)
-        # Remove leading dash from RADIUM_EXTRAVERSION
-        RADIUM_EXTRAVERSION := $(shell echo $(RADIUM_EXTRAVERSION) | sed 's/-//')
-        TARGET_VENDOR_RELEASE_BUILD_ID := $(RADIUM_EXTRAVERSION)
-      else
-        TARGET_VENDOR_RELEASE_BUILD_ID := $(shell date -u +%Y%m%d)
-      endif
-    else
-      TARGET_VENDOR_RELEASE_BUILD_ID := $(TARGET_VENDOR_RELEASE_BUILD_ID)
-    endif
-    RADIUM_DISPLAY_VERSION=$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(TARGET_VENDOR_RELEASE_BUILD_ID)
-  endif
-endif
-endif
-
-# by default, do not update the recovery with system updates
-PRODUCT_PROPERTY_OVERRIDES += persist.sys.recovery_update=false
-
-ifndef CM_PLATFORM_SDK_VERSION
-  # This is the canonical definition of the SDK version, which defines
-  # the set of APIs and functionality available in the platform.  It
-  # is a single integer that increases monotonically as updates to
-  # the SDK are released.  It should only be incremented when the APIs for
-  # the new release are frozen (so that developers don't write apps against
-  # intermediate builds).
-  CM_PLATFORM_SDK_VERSION := 2
-endif
-
-ifndef CM_PLATFORM_REV
-  # For internal SDK revisions that are hotfixed/patched
-  # Reset after each CM_PLATFORM_SDK_VERSION release
-  # If you are doing a release and this is NOT 0, you are almost certainly doing it wrong
-  CM_PLATFORM_REV := 0
-endif
-
-PRODUCT_PROPERTY_OVERRIDES += \
-  ro.radium.display.version=$(RADIUM_DISPLAY_VERSION)
-
-# CyanogenMod Platform SDK Version
-PRODUCT_PROPERTY_OVERRIDES += \
-  ro.cm.build.version.plat.sdk=$(CM_PLATFORM_SDK_VERSION)
-
-# CyanogenMod Platform Internal
-PRODUCT_PROPERTY_OVERRIDES += \
-  ro.cm.build.version.plat.rev=$(CM_PLATFORM_REV)
-
--include $(WORKSPACE)/build_env/image-auto-bits.mk
-
-$(call prepend-product-if-exists, vendor/extra/product.mk)
+#
+# ADDITIONAL_BUILD_PROPERTIES
+#
+keyguard.no_require_sim=true
+ro.com.android.dataroaming=true
+ro.config.ringtone=Ring_Synth_04.ogg
+ro.config.notification_sound=pixiedust.ogg
+ro.carrier=unknown
+ro.config.alarm_alert=Alarm_Classic.ogg
+dalvik.vm.dex2oat-filter=speed
+dalvik.vm.dex2oat-swap=false
+dalvik.vm.heapstartsize=12m
+dalvik.vm.heapgrowthlimit=128m
+dalvik.vm.heapsize=256m
+dalvik.vm.heaptargetutilization=0.75
+dalvik.vm.heapminfree=4m
+ro.hwui.texture_cache_size=72
+ro.hwui.layer_cache_size=48
+ro.hwui.r_buffer_cache_size=8
+ro.hwui.path_cache_size=32
+ro.hwui.gradient_cache_size=1
+ro.hwui.drop_shadow_cache_size=6
+ro.hwui.texture_cache_flushrate=0.4
+ro.hwui.text_small_cache_width=1024
+ro.hwui.text_small_cache_height=1024
+ro.hwui.text_large_cache_width=2048
+ro.hwui.text_large_cache_height=1024
+sys.io.scheduler=row
+ro.com.google.clientidbase=android-google
+ro.url.legal=http://www.google.com/intl/%s/mobile/android/basic/phone-legal.html
+ro.url.legal.android_privacy=http://www.google.com/intl/%s/mobile/android/basic/privacy.html
+ro.com.android.wifi-watchlist=GoogleGuest
+ro.setupwizard.enterprise_mode=1
+ro.com.android.dateformat=MM-dd-yyyy
+ro.build.selinux=1
+persist.sys.dun.override=0
+media.sf.omx-plugin=libffmpeg_omx.so
+media.sf.extractor-plugin=libffmpeg_extractor.so
+persist.sys.recovery_update=false
+persist.sys.dalvik.vm.lib.2=libart
+dalvik.vm.isa.arm64.variant=generic
+dalvik.vm.isa.arm64.features=default
+dalvik.vm.isa.arm.variant=cortex-a53
+dalvik.vm.isa.arm.features=default
+ro.kernel.android.checkjni=1
+dalvik.vm.lockprof.threshold=500
+dalvik.vm.image-dex2oat-filter=verify-at-runtime
+dalvik.vm.usejit=true
+net.bt.name=Android
+dalvik.vm.stack-trace-file=/data/anr/traces.txt
+ro.expect.recovery_id=0xe28d089d3a30c320b4ddeb02c0aa7d8f682e99a8000000000000000000000000
