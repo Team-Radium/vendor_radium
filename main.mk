@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include vendor/nexus/configs/aosp_fixes.mk
-include vendor/nexus/configs/system.mk
-include vendor/nexus/configs/nexus_build.mk
-include vendor/nexus/configs/bootanimation.mk
-include vendor/nexus/configs/version.mk
+include vendor/radium/configs/aosp_fixes.mk
+include vendor/radium/configs/system.mk
+include vendor/radium/configs/nexus_build.mk
+include vendor/radium/configs/bootanimation.mk
+include vendor/radium/configs/version.mk
