@@ -1,3 +1,3 @@
-. "$(gettop)/vendor/aospb/build/envsetup.sh"
+. "$(gettop)/vendor/radium/build/envsetup.sh"
 
-aospb_device_combos
+radium_device_combos
