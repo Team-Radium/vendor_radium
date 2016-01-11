@@ -36,7 +36,7 @@ PRODUCT_COPY_FILES += \
 
 # RADIUM-specific init file
 PRODUCT_COPY_FILES += \
-    vendor/radium/prebuilt/common/etc/init.local.rc:root/init.local.rc
+    vendor/radium/prebuilt/common/etc/init.local.rc:root/init.radium.rc
 
 # Copy latinime for gesture typing
 PRODUCT_COPY_FILES += \
